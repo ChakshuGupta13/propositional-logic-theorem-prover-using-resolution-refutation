@@ -27,28 +27,29 @@ def segment_sentence(sentence):
 
 
 def forward_slice(sentence, index):
-    sentence_slice = []
+    """
+    Returns forward slice of sentence begining from index.
 
-    off_balance = 0
-
-    L = len(sentence)
-
-    while index < L:
-        sentence_slice.append(sentence[index])
-
-        if sentence[index] == "(":
-            off_balance += 1
-        elif sentence[index] == ")":
-            off_balance -= 1
-
-        if off_balance == 0 and sentence[index] != "!":
-            break
-
-        index += 1
+    Let us define forward slice as next complete segment in sentence.
+    Examples:
+        Forward Slice from index = 2 of "A(B(!C&D))" is "(B(!C&D))"
+        Forward Slice from index = 3 of "A(B(!C&D))" is "B"
+        Forward Slice from index = 4 of "A(B(!C&D))" is "(!C&D)"
+        Forward Slice from index = 5 of "A(B(!C&D))" is "!C"
     
-    assert off_balance == 0
+    @param sentence (list)
+    : Propositional Sentence or Formula
+    @param index (int)
+    : Index from which slicing should begin (included)
+    """
+    off_balance = 0
+    i = index
 
-    return sentence_slice, index
+    while i < len(sentence):
+        off_balance += 1 if sentence[i] == '(' else -1 if sentence[i] == ')' else 0
+        if off_balance == 0 and sentence[i] != "!":
+            return sentence[index : (i + 1)], i
+        i += 1
 
 
 def backward_slice(sentence):
