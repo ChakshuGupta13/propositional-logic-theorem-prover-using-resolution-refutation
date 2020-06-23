@@ -170,37 +170,6 @@ def literal_not_protected(sentence):
     return False
 
 
-def remove_extra_parenthesis(sentence):
-    processed_sentence = []
-    
-    i = 0
-    L = len(sentence)
-    brackets = []
-    content = []
-
-    while i < L:
-        if sentence[i] == "(":
-            content.append(processed_sentence.copy())
-            brackets.append("(")
-            
-            processed_sentence.clear()
-        elif sentence[i] == ")":
-            if literal_not_protected(processed_sentence):
-                processed_sentence.insert(0, "(")
-                processed_sentence.append(")")
-
-            processed_sentence = content[len(content) - 1].copy() + processed_sentence
-            
-            brackets.pop()
-            content.pop()
-        else:
-            processed_sentence.append(sentence[i])
-        
-        i += 1
-
-    return processed_sentence
-
-
 def iff_equivalent(A, B):
     """
     Returns ((A>B)&(B>A)) as equivalent of (A=B).
@@ -342,7 +311,9 @@ def eliminate_invalid_parenthesis(sentence):
             brackets.append("(")
             processed_sentence.clear()
         elif sentence[i] == ")" and len(content):
-            processed_sentence = content[len(content) - 1].copy() + ['('] + processed_sentence + [')']
+            if literal_not_protected(processed_sentence):
+                processed_sentence = ['('] + processed_sentence + [')']
+            processed_sentence = content[len(content) - 1].copy() + processed_sentence
             brackets.pop()
             content.pop()
         else:
@@ -383,17 +354,17 @@ def CNF(sentence):
     """
 
     sentence = eliminate_op(sentence, "=")
-    sentence = remove_extra_parenthesis(sentence)
+    sentence = eliminate_invalid_parenthesis(sentence)
     sentence = eliminate_op(sentence, ">")
-    sentence = remove_extra_parenthesis(sentence)
+    sentence = eliminate_invalid_parenthesis(sentence)
     sentence = move_not_inwards(sentence)
-    sentence = remove_extra_parenthesis(sentence)
+    sentence = eliminate_invalid_parenthesis(sentence)
     
     prev = []
     while prev != sentence:
         prev = sentence
         sentence = distribute_or_over_and(sentence)
-        sentence = remove_extra_parenthesis(sentence)
+        sentence = eliminate_invalid_parenthesis(sentence)
     
     return split_around_and(sentence)
 
@@ -498,7 +469,7 @@ def vet_sentence(sentence):
     : Propositional Sentence or Formula
     """
     sentence = induce_parenthesis(sentence)
-    sentence = remove_extra_parenthesis(sentence)
+    sentence = eliminate_invalid_parenthesis(sentence)
     return CNF(sentence)
 
 
