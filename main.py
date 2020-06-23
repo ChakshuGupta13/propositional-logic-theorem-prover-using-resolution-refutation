@@ -53,35 +53,29 @@ def forward_slice(sentence, index):
 
 
 def backward_slice(sentence):
-    sentence_slice = []
-    
-    off_balance = 0
+    """
+    Returns backward slice of sentence.
 
-    i = len(sentence) - 1
+    Let us define backward slice as previous complete segment in sentence.
+    Examples:
+        Backward Slice of "A(B(!C&D))" is "(B(!C&D))"
+        Backward Slice of "B(!C&D)" is "(!C&D)"
+        Backward Slice of "!C&D" is "D"
+        Backward Slice of "!C" is "!C"
+    
+    @param sentence (list)
+    : Propositional Sentence or Formula
+    """
+    off_balance = 0
+    L = len(sentence)
+    i = L - 1
 
     while i >= 0:
-        sentence_slice.insert(0, sentence[i])
-
-        if sentence[i] == ")":
-            off_balance += 1
-        elif sentence[i] == "(":
-            off_balance -= 1
-        
-        sentence.pop()
-
+        off_balance += 1 if sentence[i] == ')' else -1 if sentence[i] == '(' else 0
         if off_balance == 0:
-            if i > 0 and sentence[i - 1] == "!":
-                i -= 1
-                sentence_slice.insert(0, sentence[i])
-                sentence.pop()
-
-            break
-        
+            i -= 1 if i > 0 and sentence[i - 1] == "!" else 0
+            return sentence[i : L], sentence[0 : i]
         i -= 1
-
-    assert off_balance == 0
-
-    return sentence_slice, sentence
 
 
 def around_unary_op(sentence, op):
