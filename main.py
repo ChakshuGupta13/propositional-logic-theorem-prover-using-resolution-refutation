@@ -237,17 +237,9 @@ def eliminate_op(sentence, op):
 
             B, i = forward_slice(sentence, i)
 
-            equivalent = []
-            if op == "=":
-                A = eliminate_op(A, "=")
-                B = eliminate_op(B, "=")
-                equivalent = iff_equivalent(A, B)
-            elif op == ">":
-                A = eliminate_op(A, ">")
-                B = eliminate_op(B, ">")
-                equivalent = implies_equivalent(A, B)
-
-            processed_sentence += equivalent.copy()
+            A = eliminate_op(A, op)
+            B = eliminate_op(B, op)
+            processed_sentence += (iff_equivalent(A, B) if op == '=' else implies_equivalent(A, B)).copy()
         else:
             processed_sentence.append(sentence[i])
 
