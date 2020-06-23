@@ -1,7 +1,7 @@
-LOGICAL_OPERATORS = ['!', '&', '|', '>', '=', '(', ')']
+PROPOSITIONAL_OPERATORS = ['!', '&', '|', '>', '=', '(', ')']
 
 def is_propositional_op(op):
-    return op in LOGICAL_OPERATORS
+    return op in PROPOSITIONAL_OPERATORS
 
 
 def segment_sentence(sentence):
