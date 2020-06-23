@@ -1,6 +1,12 @@
 PROPOSITIONAL_OPERATORS = ['!', '&', '|', '>', '=', '(', ')']
 
 def is_propositional_op(op):
+    """
+    Returns whether op is propositional operator or not.
+
+    @param op (str)
+    : Operator
+    """
     return op in PROPOSITIONAL_OPERATORS
 
 
@@ -199,7 +205,7 @@ def iff_equivalent(A, B):
     """
     Returns ((A>B)&(B>A)) as equivalent of (A=B).
 
-    @param A, B
+    @param A (list), B (list)
     : Propositonal Sentences or Formulae
     """
     return ['(', '('] + A.copy() + ['>'] + B.copy() + [')', '&', '('] + B.copy() + ['>'] + A.copy() + [')', ')']
@@ -209,7 +215,7 @@ def implies_equivalent(A, B):
     """
     Returns ((!A)|B) as equivalent of (A>B).
 
-    @param A, B
+    @param A (list), B (list)
     : Propositonal Sentences or Formulae
     """
     return ['(', '(', '!'] + A.copy() + [')', '|'] + B.copy() + [')']
@@ -376,7 +382,7 @@ def print_sentence(sentence):
     """
     Prints the segmented segment as str.
 
-    @param sentence
+    @param sentence (list)
     : Segmented Propositional Sentence or Formula
     """
     print(''.join(sentence))
@@ -473,7 +479,7 @@ def CNF(sentence):
     """
     Returns Conjunctive Normal Form (CNF) of the sentence.
 
-    @param sentence
+    @param sentence (list)
     : Propositional Sentence or Formula
     """
 
@@ -641,7 +647,7 @@ def vet_sentence(sentence):
     """
     Returns the sentence in CNF after vetting sentence with proper parenthesis.
 
-    @param sentence
+    @param sentence (list)
     : Propositional Sentence or Formula
     """
     sentence = induce_parenthesis(sentence)
@@ -689,6 +695,13 @@ def main():
 
 
 def run_multiple_test_cases():
+    """
+    Run multiple test cases.
+    
+    Input Order:
+    First line: Number of test cases
+    Then as many test case input followed from next line.
+    """
     num_test_cases = int(input().splitlines()[0])
     while num_test_cases:
         main()
