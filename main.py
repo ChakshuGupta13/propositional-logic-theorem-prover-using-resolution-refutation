@@ -522,118 +522,66 @@ def clause_map(sentence):
     return m
 
 
-def print_dict(dictionary):
-    for key in dictionary:
-        if dictionary[key]:
-            print("!", end="")
-        print(key, end=" ")
+def format_dict(dictionary):
+    return ", ".join([("!" if dictionary[key] else "") + str(key) for key in dictionary])
 
 
 def resolve(sentence, mode):
+    """
+    Resolves the given sentence.
+
+    @param sentence (list)
+    : Propositional Sentence or Formula
+    @param mode (bool)
+    : To print or not to print resolution steps
+    """
+    clause = []
+    clauses = []
+    clause_maps = []
+    for literal in sentence:
+        if literal == '&':
+            clauses.append(''.join(clause))
+            clause_maps.append(clause_map(clause))
+            clause.clear()
+        else:
+            clause.append(literal)
+    clauses.append(''.join(clause))
+    clause_maps.append(clause_map(clause))
+    new_clause_maps = []
+    
     if mode:
         print("Clauses <- The set of clauses in the CNF representation of (KB & !Q)")
-        print("Clauses:")
+        print("Clauses: {}".format(clauses))
+        print("New Clauses <- {}")
+        print("For each pair of clauses C_i, C_j in Clauses do:")
     
-    clauses = []
-    tmp = []
-    i = 0
-    while i < len(sentence):
-        if sentence[i] == "&":
-            if mode:
-                print_sentence(tmp)
-            
-            clauses.append(clause_map(tmp))
-            tmp.clear()
-        else:
-            tmp.append(sentence[i])
-        i += 1
-    if mode:
-        print_sentence(tmp)
-    
-    clauses.append(clause_map(tmp))
-    tmp.clear()
-
-    new_clauses = []
-    if mode:
-        print("new <- {}")
-
-    while True:
-        if mode:
-            print("For each pair of clauses Ci, Cj in clauses do:")
-        
-        i = 0
-        while i < len(clauses):
-            j = i + 1
-            while j < len(clauses):
+    while True:        
+        for i in range(0, len(clause_maps)):
+            for j in range((i + 1), len(clause_maps)):
                 resolvent = {}
-                for var in clauses[i]:
-                    if var not in clauses[j]:
-                        resolvent[var] = clauses[i][var]
-                    elif clauses[j][var] == clauses[i][var]:
-                        resolvent[var] = clauses[i][var]
+                for var in clause_maps[i]:
+                    if var not in clause_maps[j] or clause_maps[j][var] == clause_maps[i][var]:
+                        resolvent[var] = clause_maps[i][var]
                 
-                for var in clauses[j]:
-                    if var not in clauses[i]:
-                        resolvent[var] = clauses[j][var]
-                    elif clauses[i][var] == clauses[j][var]:
-                        resolvent[var] = clauses[j][var]
+                for var in clause_maps[j]:
+                    if var not in clause_maps[i]:
+                        resolvent[var] = clause_maps[j][var]
 
-                if mode:
-                    print("\t", end="")
-                    print_dict(resolvent)
-                    print(" <- PL-RESOLVE(", end="")
-                    print_dict(clauses[i])
-                    print(", ", end="")
-                    print_dict(clauses[j])
-                    print(")")
+                print("\t({}) <- RESOLVE(({}), ({}))".format(format_dict(resolvent), format_dict(clause_maps[i]), format_dict(clause_maps[j]))) if mode else None
 
                 if not bool(resolvent):
-                    if mode:
-                        print("\tIf resolvents contains the empty clause then return true.")
+                    print("\tIf Resolvents contains the empty clause: Return True.") if mode else None
                     return True
 
-                if mode:
-                    print("\tnew <- new ∪ resolvents")
-                
-                already_present = False
-                for k in new_clauses:
-                    if k == resolvent:
-                        already_present = True
-                        break
-                
-                if not already_present:
-                    new_clauses.append(resolvent)
-                
-                j += 1
-            i += 1
+                new_clause_maps.append(resolvent) if resolvent not in new_clause_maps else None
+                print("\tNew Clauses <- New Clauses ∪ Resolvents") if mode else None
 
-        is_subset = True
-        for i in new_clauses:
-            found = False
-            for j in clauses:
-                if i == j:
-                    found = True
-                    break
-            if not found:
-                is_subset = False
-        
-        if is_subset:
-            if mode:
-                print("if new ⊆ clauses then return false")
-            
+        if all(new_clause_map in clause_maps for new_clause_map in new_clause_maps):
+            print("If New Clauses ⊆ Clauses : Return False") if mode else None
             return False
 
-        if mode:
-            print("clauses <- clauses ∪ new")
-        
-        for i in new_clauses:
-            found = False
-            for j in clauses:
-                if i == j:
-                    found = True
-                    break
-            if not found:
-                clauses.append(i)
+        clause_maps += [new_clause_map for new_clause_map in new_clause_maps if new_clause_map not in clause_maps]
+        print("Clauses <- Clauses ∪ New Clauses") if mode else None
 
 
 def get_sentence():
