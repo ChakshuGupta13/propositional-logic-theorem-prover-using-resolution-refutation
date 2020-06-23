@@ -208,27 +208,13 @@ def remove_extra_parenthesis(sentence):
 
 
 def iff_equivalent(A, B):
-    equivalent = []
+    """
+    Return ((A>B)&(B>A)) as equivalent of (A=B)
 
-    equivalent.append("(")
-
-    equivalent.append("(")
-    equivalent += A.copy()
-    equivalent.append(">")
-    equivalent += B.copy()
-    equivalent.append(")")
-    
-    equivalent.append("&")
-    
-    equivalent.append("(")
-    equivalent += B.copy()
-    equivalent.append(">")
-    equivalent += A.copy()
-    equivalent.append(")")
-
-    equivalent.append(")")
-
-    return equivalent
+    @param A, B
+    : Propositonal Sentences or Formulae
+    """
+    return ['(', '('] + A.copy() + ['>'] + B.copy() + [')', '&', '('] + B.copy() + ['>'] + A.copy() + [')', ')']
 
 
 def implies_equivalent(A, B):
