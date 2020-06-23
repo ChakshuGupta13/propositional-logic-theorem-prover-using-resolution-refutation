@@ -86,49 +86,33 @@ def backward_slice(sentence):
 
 def around_unary_op(sentence, op):
     processed_sentence = []
-
     i = 0
-    L = len(sentence)
-
-    while i < L:
+    while i < len(sentence):
         if sentence[i] == op:
             i += 1
-
             sentence_slice, i = forward_slice(sentence, i)
             sentence_slice = around_unary_op(sentence_slice, op)
-
             processed_sentence += ['(', '!'] + sentence_slice.copy() + [')']
         else:
             processed_sentence.append(sentence[i])
-        
         i += 1
-
     return processed_sentence
 
 
 def around_binary_op(sentence, op):
     processed_sentence = []
-
     i = 0
-    L = len(sentence)
-
-    while i < L:
+    while i < len(sentence):
         if sentence[i] == op:
             A, processed_sentence = backward_slice(processed_sentence)
             A = around_binary_op(A, op)
-            
             i += 1
-            assert i < L
-
             sentence_slice, i = forward_slice(sentence, i)
             sentence_slice = around_binary_op(sentence_slice, op)
-
             processed_sentence += ['('] + A.copy() + [op] + sentence_slice.copy() + [')']
         else:
             processed_sentence.append(sentence[i])
-        
         i += 1
-
     return processed_sentence
 
 
