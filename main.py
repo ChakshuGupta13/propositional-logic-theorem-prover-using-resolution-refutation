@@ -393,24 +393,17 @@ def eliminate_invalid_parenthesis(sentence):
     brackets = []
     content = []
     
-    i = 0
-    L = len(sentence)
-    while i < L:
+    for i in range(0, len(sentence)):
         if sentence[i] == "(":
             content.append(processed_sentence.copy())
             brackets.append("(")
             processed_sentence.clear()
-        elif sentence[i] == ")" and len(content) != 0:
-            processed_sentence.insert(0, "(")
-            processed_sentence.append(")")
-            
-            processed_sentence = content[len(content) - 1].copy() + processed_sentence
-            
+        elif sentence[i] == ")" and len(content):
+            processed_sentence = content[len(content) - 1].copy() + ['('] + processed_sentence + [')']
             brackets.pop()
             content.pop()
         else:
             processed_sentence.append(sentence[i])
-        i += 1
 
     return processed_sentence
 
