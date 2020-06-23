@@ -222,30 +222,19 @@ def implies_equivalent(A, B):
 
 
 def eliminate_op(sentence, op):
-    assert op == "=" or op == ">"
-
     processed_sentence = []
-    
     i = 0
-    L = len(sentence)
-
-    while i < L:
+    while i < len(sentence):
         if sentence[i] == op:
             A, processed_sentence = backward_slice(processed_sentence)
-
             i += 1
-            assert i < L
-
             B, i = forward_slice(sentence, i)
-
             A = eliminate_op(A, op)
             B = eliminate_op(B, op)
             processed_sentence += (iff_equivalent(A, B) if op == '=' else implies_equivalent(A, B)).copy()
         else:
             processed_sentence.append(sentence[i])
-
         i += 1
-
     return processed_sentence
 
 
