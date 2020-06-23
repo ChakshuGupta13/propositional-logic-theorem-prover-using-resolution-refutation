@@ -317,8 +317,7 @@ def distribute_or_over_and(sentence):
     processed_sentence = []
 
     i = 0
-    L = len(sentence)
-    while i < L:
+    while i < len(sentence):
         if sentence[i] == "|":
             A, processed_sentence = backward_slice(processed_sentence)
             A = distribute_or_over_and(A)
@@ -326,8 +325,7 @@ def distribute_or_over_and(sentence):
             tmp3 = []
             if A[0] == "(":
                 j = 1
-                N = len(A) - 1
-                while j < N:
+                while j < (len(A) - 1):
                     tmp, j = forward_slice(A, j)
                     tmp3.append(tmp.copy())
                     j += 2
@@ -343,33 +341,17 @@ def distribute_or_over_and(sentence):
             tmp2 = []
             if B[0] == "(":
                 j = 1
-                N = len(B) - 1
-                while j < N:
+                while j < (len(B) - 1):
                     tmp, j = forward_slice(B, j)
                     tmp2.append(tmp.copy())
                     j += 2
             else:
                 tmp2.append(B.copy())
 
-            k = 0
-            N = len(tmp2)
-            while k < N:
-                m = 0
-                M = len(tmp3)
-                while m < M:
-                    processed_sentence.append("(")
-                    processed_sentence += tmp3[m].copy()
-                    processed_sentence.append("|")
-                    processed_sentence += tmp2[k].copy()
-                    processed_sentence.append(")")
-
-                    if m != len(tmp3) - 1:
-                        processed_sentence.append("&")
-                    m += 1
-
-                if k != len(tmp2) - 1:
-                    processed_sentence.append("&")                
-                k += 1
+            for k in range(0, len(tmp2)):
+                for m in range(0, len(tmp3)):
+                    processed_sentence += ['('] + tmp3[m].copy() + ['|'] + tmp2[k].copy() + [')'] + (['&'] if m != len(tmp3) - 1 else [])
+                processed_sentence += ['&'] if k != len(tmp2) - 1 else []
         else:
             processed_sentence.append(sentence[i])
         
