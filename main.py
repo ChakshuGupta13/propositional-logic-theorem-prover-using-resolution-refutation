@@ -96,10 +96,7 @@ def around_unary_op(sentence, op):
             sentence_slice, i = forward_slice(sentence, i)
             sentence_slice = around_unary_op(sentence_slice, op)
 
-            processed_sentence.append("(")
-            processed_sentence.append("!")
-            processed_sentence += sentence_slice.copy()
-            processed_sentence.append(")")
+            processed_sentence += ['(', '!'] + sentence_slice.copy() + [')']
         else:
             processed_sentence.append(sentence[i])
         
@@ -125,11 +122,7 @@ def around_binary_op(sentence, op):
             sentence_slice, i = forward_slice(sentence, i)
             sentence_slice = around_binary_op(sentence_slice, op)
 
-            processed_sentence.append("(")
-            processed_sentence += A.copy()
-            processed_sentence.append(op)
-            processed_sentence += sentence_slice.copy()
-            processed_sentence.append(")")
+            processed_sentence += ['('] + A.copy() + [op] + sentence_slice.copy() + [')']
         else:
             processed_sentence.append(sentence[i])
         
