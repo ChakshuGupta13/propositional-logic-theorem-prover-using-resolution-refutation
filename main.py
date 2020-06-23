@@ -1,8 +1,7 @@
-def is_propositional_op(op):
-    if op == "!" or op == "&" or op == "|" or op == ">" or op == "=" or op == "(" or op == ")":
-        return True
+LOGICAL_OPERATORS = ['!', '&', '|', '>', '=', '(', ')']
 
-    return False
+def is_propositional_op(op):
+    return op in LOGICAL_OPERATORS
 
 
 def segment_sentence(sentence):
