@@ -500,25 +500,25 @@ def CNF(sentence):
 
 
 def clause_map(sentence):
+    """
+    Returns a map where keys are literals in sentence
+    and value is True if they are negated and False otherwise.
+
+    @param sentence (list)
+    : Propositional Sentence or Formula in CNF
+    : Format : (A|B|...|Z) where literal like A, B, ..., Z can be negated.
+    """
     m = {}
-    if sentence[0] == "(":
-        j = 1
-        while j < len(sentence) - 1:
-            literal, j = forward_slice(sentence, j)
-            if literal[0] == "!":
-                m[literal[1]] = True
-            else:
-                m[literal[0]] = False
-            j += 2
-    else:
-        j = 0
-        while j < len(sentence):
-            literal, j = forward_slice(sentence, j)
-            if literal[0] == "!":
-                m[literal[1]] = True
-            else:
-                m[literal[0]] = False
-            j += 2
+    j = 1 if sentence[0] == '(' else 0
+    L = len(sentence) - 1 if sentence[0] == '(' else len(sentence)
+    while j < L:
+        literal, j = forward_slice(sentence, j)
+        if literal[0] == "!":
+            m[literal[1]] = True
+        else:
+            m[literal[0]] = False
+        # [NOTE] 'j' is incremented by 2 to escape '|' and reach next literal.
+        j += 2
     return m
 
 
