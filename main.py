@@ -663,47 +663,49 @@ def resolve(sentence, mode):
                 clauses.append(i)
 
 
-n, m = input().split()
+def main():
+    n, m = input().split()
+    n = int(n)
+    m = int(m)
 
-n = int(n)
-m = int(m)
+    knowledge_base = []
+    for i in range(0, n):
+        sentence = input().splitlines()[0]
+        sentence = segment_sentence(sentence)
+        sentence = induce_parenthesis(sentence)
+        sentence = remove_extra_parenthesis(sentence)
+        sentence = CNF(sentence)
+        
+        knowledge_base += sentence.copy()
+        if i != n - 1:
+            knowledge_base.append("&")
 
-knowledge_base = []
-for i in range(0, n):
-    sentence = input()
-    sentence = segment_sentence(sentence)
-    sentence = induce_parenthesis(sentence)
-    sentence = remove_extra_parenthesis(sentence)
-    sentence = CNF(sentence)
-    
-    knowledge_base += sentence.copy()
-    if i != n - 1:
-        knowledge_base.append("&")
+    query = input()
+    query = segment_sentence(query)
+    query = induce_parenthesis(query)
+    query = remove_extra_parenthesis(query)
+    query = CNF(query)
 
-query = input()
-query = segment_sentence(query)
-query = induce_parenthesis(query)
-query = remove_extra_parenthesis(query)
-query = CNF(query)
-
-rub = []
-if len(knowledge_base) > 0:
-    rub = knowledge_base.copy()
-    rub.append("&")
-    rub.append("(")
-    rub.append("!")
-    rub += query.copy()
-    rub.append(")")
-else:
-    rub.append("!")
-    rub += query.copy()
-
-if len(rub):
-    rub = induce_parenthesis(rub)
-    rub = remove_extra_parenthesis(rub)
-    rub = CNF(rub)
-
-    if resolve(rub, m):
-        print("1")
+    rub = []
+    if len(knowledge_base) > 0:
+        rub = knowledge_base.copy()
+        rub.append("&")
+        rub.append("(")
+        rub.append("!")
+        rub += query.copy()
+        rub.append(")")
     else:
-        print("0")
+        rub.append("!")
+        rub += query.copy()
+
+    if len(rub):
+        rub = induce_parenthesis(rub)
+        rub = remove_extra_parenthesis(rub)
+        rub = CNF(rub)
+
+        if resolve(rub, m):
+            print("1")
+        else:
+            print("0")
+
+main()
