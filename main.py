@@ -497,5 +497,5 @@ def run_multiple_test_cases():
         num_test_cases -= 1
 
 
-run_multiple_test_cases()
-# main()
+# run_multiple_test_cases()
+main()
