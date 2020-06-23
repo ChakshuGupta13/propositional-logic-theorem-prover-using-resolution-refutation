@@ -549,9 +549,9 @@ def clause_map(sentence):
     return m
 
 
-def print_dict(dict):
-    for key in dict:
-        if dict[key]:
+def print_dict(dictionary):
+    for key in dictionary:
+        if dictionary[key]:
             print("!", end="")
         print(key, end=" ")
 
