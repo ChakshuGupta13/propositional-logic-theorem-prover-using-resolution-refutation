@@ -680,7 +680,7 @@ def main():
         if i != n - 1:
             knowledge_base.append("&")
 
-    query = input()
+    query = input().splitlines()[0]
     query = segment_sentence(query)
     query = induce_parenthesis(query)
     query = remove_extra_parenthesis(query)
