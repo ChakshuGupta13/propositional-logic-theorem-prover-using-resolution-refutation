@@ -475,6 +475,13 @@ def split_around_and(sentence):
 
 
 def CNF(sentence):
+    """
+    Returns Conjunctive Normal Form (CNF) of the sentence.
+
+    @param sentence
+    : Propositional Sentence or Formula
+    """
+
     sentence = eliminate_op(sentence, "=")
     sentence = remove_extra_parenthesis(sentence)
     sentence = eliminate_op(sentence, ">")
@@ -488,8 +495,7 @@ def CNF(sentence):
         sentence = distribute_or_over_and(sentence)
         sentence = remove_extra_parenthesis(sentence)
     
-    sentence = split_around_and(sentence)
-    return sentence
+    return split_around_and(sentence)
 
 
 def clause_map(sentence):
