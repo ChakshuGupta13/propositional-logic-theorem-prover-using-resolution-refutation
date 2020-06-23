@@ -254,61 +254,33 @@ def move_not_inwards(sentence):
 
     while True:
         processed_sentence = []
-
         i = 0
-        L = len(sentence)
-        
-        while i < L:
+        while i < len(sentence):
             if sentence[i] == "!":
                 i += 1
-                assert i < len(sentence)
-
                 B, i = forward_slice(sentence, i)
-
                 if B[0] == "(":
                     processed_sentence.append("(")
-
                     j = 1
-                    N = len(B)
-
-                    while j < N:
+                    while j < len(B):
                         tmp, j = forward_slice(B, j)
-
-                        if tmp[0] == "!":
-                            tmp.pop(0)
-                        else:
-                            tmp.insert(0, "!")
-
+                        tmp.pop(0) if tmp[0] == "!" else tmp.insert(0, "!")
                         processed_sentence += tmp.copy()
-
                         j += 1
                         if j < len(B) - 1:
-                            if B[j] == "|":
-                                processed_sentence.append("&")
-                            elif (B[j] == "&"):
-                                processed_sentence.append("|")
-                            else:
-                                assert B[j] == "|" or B[j] == "&"
-
+                            processed_sentence += ['&'] if B[j] == "|" else ['|'] if (B[j] == "&") else []
                         j += 1
-
                     processed_sentence.append(")")
                 else:
-                    if B[0] == "!":
-                        B.pop(0)
-                    else:
-                        processed_sentence.append("!")
-
+                    B.pop(0) if B[0] == "!" else processed_sentence.append("!")
                     processed_sentence += B.copy()
             else:
                 processed_sentence.append(sentence[i])
-            
             i += 1
-        
-        if processed_sentence != sentence:
-            sentence = processed_sentence
-        else:
+
+        if processed_sentence == sentence:
             break
+        sentence = processed_sentence
 
     return processed_sentence
 
