@@ -665,59 +665,59 @@ def resolve(sentence, mode):
 
 def get_sentence():
     """
-    Returns the one-line input after removing '\n'
+    Returns the one-line segmented input without '\n'.
     """
-    return input().splitlines()[0]
+    return segment_sentence(input().splitlines()[0])
 
 
 def vet_sentence(sentence):
     """
-    Returns the sentence in CNF
+    Returns the sentence in CNF after vetting sentence with proper parenthesis.
 
     @param sentence
     : Propositional Sentence or Formula
     """
-    sentence = segment_sentence(sentence)
     sentence = induce_parenthesis(sentence)
     sentence = remove_extra_parenthesis(sentence)
     return CNF(sentence)
 
 
 def main():
+    """
+    Main driver code
+    """
+
+    # n : Number of Propositional Sentence or Formula in Knowledge Base
+    # m : Mode for Output
+    # 
+    # If m == 0 :
+    #   Print only the result (int 0 or 1)
+    # If m == 1 : 
+    #   1. Print the resolution steps used
+    #   2. Print the result (int 0 or 1) in the last line
     n, m = input().split()
     n = int(n)
     m = int(m)
 
     knowledge_base = []
     for i in range(0, n):
+        # sentence : Propositional Sentence or Formula in Knowledge Base
         sentence = vet_sentence(get_sentence())
-        
         knowledge_base += sentence.copy()
+        
         if i != n - 1:
             knowledge_base.append("&")
 
+    # query : Propositional Sentence or Formula to be proved
     query = vet_sentence(get_sentence())
 
-    rub = []
+    # rub : Input for resolution
+    rub = ['!'] + query.copy()
     if len(knowledge_base) > 0:
-        rub = knowledge_base.copy()
-        rub.append("&")
-        rub.append("(")
-        rub.append("!")
-        rub += query.copy()
-        rub.append(")")
-    else:
-        rub.append("!")
-        rub += query.copy()
+        rub = knowledge_base.copy() + ['&', '('] + rub.copy() + [')']
 
     if len(rub):
-        rub = induce_parenthesis(rub)
-        rub = remove_extra_parenthesis(rub)
-        rub = CNF(rub)
-
-        if resolve(rub, m):
-            print("1")
-        else:
-            print("0")
+        rub = vet_sentence(rub)
+        print(int(resolve(rub, m)))
 
 main()
