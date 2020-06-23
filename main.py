@@ -663,6 +663,26 @@ def resolve(sentence, mode):
                 clauses.append(i)
 
 
+def get_sentence():
+    """
+    Returns the one-line input after removing '\n'
+    """
+    return input().splitlines()[0]
+
+
+def vet_sentence(sentence):
+    """
+    Returns the sentence in CNF
+
+    @param sentence
+    : Propositional Sentence or Formula
+    """
+    sentence = segment_sentence(sentence)
+    sentence = induce_parenthesis(sentence)
+    sentence = remove_extra_parenthesis(sentence)
+    return CNF(sentence)
+
+
 def main():
     n, m = input().split()
     n = int(n)
@@ -670,21 +690,13 @@ def main():
 
     knowledge_base = []
     for i in range(0, n):
-        sentence = input().splitlines()[0]
-        sentence = segment_sentence(sentence)
-        sentence = induce_parenthesis(sentence)
-        sentence = remove_extra_parenthesis(sentence)
-        sentence = CNF(sentence)
+        sentence = vet_sentence(get_sentence())
         
         knowledge_base += sentence.copy()
         if i != n - 1:
             knowledge_base.append("&")
 
-    query = input().splitlines()[0]
-    query = segment_sentence(query)
-    query = induce_parenthesis(query)
-    query = remove_extra_parenthesis(query)
-    query = CNF(query)
+    query = vet_sentence(get_sentence())
 
     rub = []
     if len(knowledge_base) > 0:
