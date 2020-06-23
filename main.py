@@ -693,4 +693,13 @@ def main():
         rub = vet_sentence(rub)
         print(int(resolve(rub, m)))
 
-main()
+
+def run_multiple_test_cases():
+    num_test_cases = int(input().splitlines()[0])
+    while num_test_cases:
+        main()
+        num_test_cases -= 1
+
+
+run_multiple_test_cases()
+# main()
