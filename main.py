@@ -415,64 +415,27 @@ def eliminate_invalid_parenthesis(sentence):
     return processed_sentence
 
 
+def _process_operand(operand):
+    operand = eliminate_invalid_parenthesis(operand)
+    if operand[0] == "(":
+        return ['('] + [j for j in operand[1 : len(operand) - 1] if j not in ['(', ')']] + [')']
+    else:
+        return [j for j in operand[0 : len(operand)] if j not in ['(', ')']]
+
+
 def split_around_and(sentence):
     processed_sentence = []
-    tmp = []
+    operand = []
 
-    i = 0
-    L = len(sentence)
-    while i < L:
+    for i in range(0, len(sentence)):
         if sentence[i] == "&":
-            tmp2 = eliminate_invalid_parenthesis(tmp)
-            tmp3 = []
-            if tmp2[0] == "(":
-                tmp3.append("(")
-                
-                j = 1
-                N = len(tmp2) - 1
-                while j < N:
-                    if tmp2[j] != "(" and tmp2[j] != ")":
-                        tmp3.append(tmp2[j])
-                    j += 1
-                tmp3.append(")")
-            else:
-                j = 0
-                N = len(tmp2)
-                while j < N:
-                    if tmp2[j] != "(" and tmp2[j] != ")":
-                        tmp3.append(tmp2[j])
-                    j += 1
-            processed_sentence += tmp3.copy()
+            processed_sentence += _process_operand(operand).copy()
             processed_sentence.append("&")
-            tmp.clear()
+            operand.clear()
         else:
-            tmp.append(sentence[i])
-        
-        i += 1
+            operand.append(sentence[i])
     
-    tmp2 = eliminate_invalid_parenthesis(tmp)
-    tmp3 = []
-    if tmp2[0] == "(":
-        tmp3.append("(")
-        
-        j = 1
-        N = len(tmp2) - 1
-        while j < N:
-            if tmp2[j] != "(" and tmp2[j] != ")":
-                tmp3.append(tmp2[j])
-            j += 1
-        tmp3.append(")")
-    else:
-        j = 0
-        N = len(tmp2)
-        while j < N:
-            if tmp2[j] != "(" and tmp2[j] != ")":
-                tmp3.append(tmp2[j])
-            j += 1
-    processed_sentence += tmp3.copy()
-    tmp.clear()
-
-    return processed_sentence
+    return processed_sentence + _process_operand(operand).copy()
 
 
 def CNF(sentence):
