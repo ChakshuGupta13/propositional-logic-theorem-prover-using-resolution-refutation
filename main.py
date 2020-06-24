@@ -126,7 +126,7 @@ def induce_parenthesis(sentence):
 
 
 def literal_not_protected(sentence):
-    if not any(i for i in sentence if is_propositional_op(i)):
+    if not any(is_propositional_op(i) for i in sentence):
         return False
 
     off_balance = 0
