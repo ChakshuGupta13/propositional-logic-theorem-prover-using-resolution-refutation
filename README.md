@@ -1,4 +1,5 @@
 # Propositional Logic Theorem Prover using Resolution-Refutation
+[![Build Status](https://travis-ci.com/ChakshuGupta13/propositional-logic-theorem-prover-using-resolution-refutation.svg?token=Fb5MFGC1Visp8xhxeRu4&branch=master)](https://travis-ci.com/ChakshuGupta13/propositional-logic-theorem-prover-using-resolution-refutation)
 
 Method `main` in `main.py` is responsible for taking Knowledge Base (i.e., formulae) and Query as input and implement a refutation proof (by first converting the given formulae into CNF), and report the result (1 if the query holds, and 0 otherwise). Additionally, the program have an option to print the resolution steps used in the proof.
 
