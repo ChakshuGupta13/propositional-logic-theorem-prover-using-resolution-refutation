@@ -425,13 +425,6 @@ def resolve(sentence, mode):
         print("Clauses <- Clauses ∪ New Clauses") if mode else None
 
 
-def get_sentence():
-    """
-    Returns the one-line segmented input without '\n'.
-    """
-    return segment_sentence(input().splitlines()[0])
-
-
 def vet_sentence(sentence):
     """
     Returns the sentence in CNF after vetting sentence with proper parenthesis.
@@ -444,11 +437,10 @@ def vet_sentence(sentence):
     return CNF(sentence)
 
 
-def main():
+def _get_input():
     """
-    Main driver code
+    Returns relevant formatted input (without newline character).
     """
-
     # n : Number of Propositional Sentence or Formula in Knowledge Base
     # m : Mode for Output
     # 
@@ -461,17 +453,32 @@ def main():
     n = int(n)
     m = int(m)
 
-    knowledge_base = []
-    for i in range(0, n):
+    sentences = []
+    while n:
         # sentence : Propositional Sentence or Formula in Knowledge Base
-        sentence = vet_sentence(get_sentence())
-        knowledge_base += sentence.copy()
-        
-        if i != n - 1:
-            knowledge_base.append("&")
-
+        sentences.append(input().splitlines()[0])
+        n -= 1
+    
     # query : Propositional Sentence or Formula to be proved
-    query = vet_sentence(get_sentence())
+    query = input().splitlines()[0]
+    
+    return m, sentences, query
+
+
+def main():
+    """
+    Main driver code
+    """
+    m, sentences, query = _get_input()
+
+    knowledge_base = []
+    for sentence in sentences:
+        sentence = vet_sentence(segment_sentence(sentence))
+        knowledge_base += sentence.copy()
+        knowledge_base.append("&")
+    knowledge_base.pop()
+
+    query = vet_sentence(segment_sentence(query))
 
     # rub : Input for resolution
     rub = ['!'] + query.copy()
