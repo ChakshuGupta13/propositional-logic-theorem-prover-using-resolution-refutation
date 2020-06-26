@@ -487,22 +487,4 @@ def main():
 
     if len(rub):
         rub = vet_sentence(rub)
-        print(int(resolve(rub, m)))
-
-
-def run_multiple_test_cases():
-    """
-    Run multiple test cases.
-    
-    Input Order:
-    First line: Number of test cases
-    Then as many test case input followed from next line.
-    """
-    num_test_cases = int(input().splitlines()[0])
-    while num_test_cases:
-        main()
-        num_test_cases -= 1
-
-
-# run_multiple_test_cases()
-main()
+        return int(resolve(rub, m))
