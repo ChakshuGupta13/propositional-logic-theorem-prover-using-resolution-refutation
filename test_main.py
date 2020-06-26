@@ -18,7 +18,3 @@ class MainTest(unittest.TestCase):
         self.assertEqual(main(), 1)
         self.assertEqual(main(), 1)
         self.assertEqual(main(), 1)
-
-
-if __name__ == '__main__':
-    unittest.main()
