@@ -261,16 +261,6 @@ def distribute_or_over_and(sentence):
     return processed_sentence
 
 
-def print_sentence(sentence):
-    """
-    Prints the segmented segment as str.
-
-    @param sentence (list)
-    : Segmented Propositional Sentence or Formula
-    """
-    print(''.join(sentence))
-
-
 def eliminate_invalid_parenthesis(sentence):
     processed_sentence = []
     brackets = []
