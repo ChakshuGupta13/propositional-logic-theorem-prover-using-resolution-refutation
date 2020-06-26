@@ -1,5 +1,8 @@
 language: python
 python:
   - 3.8
+install:
+  - pip install coverage
 script:
-  - python3 -m unittest discover
+  - coverage run -m unittest discover
+  - coverage report -m
