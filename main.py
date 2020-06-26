@@ -1,4 +1,5 @@
-PROPOSITIONAL_OPERATORS = ['!', '&', '|', '>', '=', '(', ')']
+PROPOSITIONAL_OPERATORS = ["!", "&", "|", ">", "=", "(", ")"]
+
 
 def is_propositional_op(op):
     """
@@ -52,7 +53,7 @@ def forward_slice(sentence, index):
     i = index
 
     while i < len(sentence):
-        off_balance += 1 if sentence[i] == '(' else -1 if sentence[i] == ')' else 0
+        off_balance += 1 if sentence[i] == "(" else -1 if sentence[i] == ")" else 0
         if off_balance == 0 and sentence[i] != "!":
             return sentence[index : (i + 1)], i
         i += 1
@@ -77,10 +78,10 @@ def backward_slice(sentence):
     i = L - 1
 
     while i >= 0:
-        off_balance += 1 if sentence[i] == ')' else -1 if sentence[i] == '(' else 0
+        off_balance += 1 if sentence[i] == ")" else -1 if sentence[i] == "(" else 0
         if off_balance == 0:
             i -= 1 if i > 0 and sentence[i - 1] == "!" else 0
-            return sentence[i : L], sentence[0 : i]
+            return sentence[i:L], sentence[0:i]
         i -= 1
 
 
@@ -92,7 +93,7 @@ def around_unary_op(sentence, op):
             i += 1
             sentence_slice, i = forward_slice(sentence, i)
             sentence_slice = around_unary_op(sentence_slice, op)
-            processed_sentence += ['(', '!'] + sentence_slice.copy() + [')']
+            processed_sentence += ["(", "!"] + sentence_slice.copy() + [")"]
         else:
             processed_sentence.append(sentence[i])
         i += 1
@@ -109,7 +110,9 @@ def around_binary_op(sentence, op):
             i += 1
             sentence_slice, i = forward_slice(sentence, i)
             sentence_slice = around_binary_op(sentence_slice, op)
-            processed_sentence += ['('] + A.copy() + [op] + sentence_slice.copy() + [')']
+            processed_sentence += (
+                ["("] + A.copy() + [op] + sentence_slice.copy() + [")"]
+            )
         else:
             processed_sentence.append(sentence[i])
         i += 1
@@ -148,7 +151,17 @@ def iff_equivalent(A, B):
     @param A (list), B (list)
     : Propositonal Sentences or Formulae
     """
-    return ['(', '('] + A.copy() + ['>'] + B.copy() + [')', '&', '('] + B.copy() + ['>'] + A.copy() + [')', ')']
+    return (
+        ["(", "("]
+        + A.copy()
+        + [">"]
+        + B.copy()
+        + [")", "&", "("]
+        + B.copy()
+        + [">"]
+        + A.copy()
+        + [")", ")"]
+    )
 
 
 def implies_equivalent(A, B):
@@ -158,7 +171,7 @@ def implies_equivalent(A, B):
     @param A (list), B (list)
     : Propositonal Sentences or Formulae
     """
-    return ['(', '(', '!'] + A.copy() + [')', '|'] + B.copy() + [')']
+    return ["(", "(", "!"] + A.copy() + [")", "|"] + B.copy() + [")"]
 
 
 def eliminate_op(sentence, op):
@@ -171,7 +184,9 @@ def eliminate_op(sentence, op):
             B, i = forward_slice(sentence, i)
             A = eliminate_op(A, op)
             B = eliminate_op(B, op)
-            processed_sentence += (iff_equivalent(A, B) if op == '=' else implies_equivalent(A, B)).copy()
+            processed_sentence += (
+                iff_equivalent(A, B) if op == "=" else implies_equivalent(A, B)
+            ).copy()
         else:
             processed_sentence.append(sentence[i])
         i += 1
@@ -197,7 +212,9 @@ def move_not_inwards(sentence):
                         processed_sentence += tmp.copy()
                         j += 1
                         if j < len(B) - 1:
-                            processed_sentence += ['&'] if B[j] == "|" else ['|'] if (B[j] == "&") else []
+                            processed_sentence += (
+                                ["&"] if B[j] == "|" else ["|"] if (B[j] == "&") else []
+                            )
                         j += 1
                     processed_sentence.append(")")
                 else:
@@ -222,7 +239,7 @@ def distribute_or_over_and(sentence):
         if sentence[i] == "|":
             A, processed_sentence = backward_slice(processed_sentence)
             A = distribute_or_over_and(A)
-            
+
             tmp3 = []
             if A[0] == "(":
                 j = 1
@@ -238,7 +255,7 @@ def distribute_or_over_and(sentence):
 
             B, i = forward_slice(sentence, i)
             B = distribute_or_over_and(B)
-            
+
             tmp2 = []
             if B[0] == "(":
                 j = 1
@@ -251,11 +268,18 @@ def distribute_or_over_and(sentence):
 
             for k in range(0, len(tmp2)):
                 for m in range(0, len(tmp3)):
-                    processed_sentence += ['('] + tmp3[m].copy() + ['|'] + tmp2[k].copy() + [')'] + (['&'] if m != len(tmp3) - 1 else [])
-                processed_sentence += ['&'] if k != len(tmp2) - 1 else []
+                    processed_sentence += (
+                        ["("]
+                        + tmp3[m].copy()
+                        + ["|"]
+                        + tmp2[k].copy()
+                        + [")"]
+                        + (["&"] if m != len(tmp3) - 1 else [])
+                    )
+                processed_sentence += ["&"] if k != len(tmp2) - 1 else []
         else:
             processed_sentence.append(sentence[i])
-        
+
         i += 1
 
     return processed_sentence
@@ -265,7 +289,7 @@ def eliminate_invalid_parenthesis(sentence):
     processed_sentence = []
     brackets = []
     content = []
-    
+
     for i in range(0, len(sentence)):
         if sentence[i] == "(":
             content.append(processed_sentence.copy())
@@ -273,7 +297,7 @@ def eliminate_invalid_parenthesis(sentence):
             processed_sentence.clear()
         elif sentence[i] == ")" and len(content):
             if literal_not_protected(processed_sentence):
-                processed_sentence = ['('] + processed_sentence + [')']
+                processed_sentence = ["("] + processed_sentence + [")"]
             processed_sentence = content[len(content) - 1].copy() + processed_sentence
             brackets.pop()
             content.pop()
@@ -286,9 +310,13 @@ def eliminate_invalid_parenthesis(sentence):
 def _process_operand(operand):
     operand = eliminate_invalid_parenthesis(operand)
     if operand[0] == "(":
-        return ['('] + [j for j in operand[1 : len(operand) - 1] if j not in ['(', ')']] + [')']
+        return (
+            ["("]
+            + [j for j in operand[1 : len(operand) - 1] if j not in ["(", ")"]]
+            + [")"]
+        )
     else:
-        return [j for j in operand[0 : len(operand)] if j not in ['(', ')']]
+        return [j for j in operand[0 : len(operand)] if j not in ["(", ")"]]
 
 
 def split_around_and(sentence):
@@ -302,7 +330,7 @@ def split_around_and(sentence):
             operand.clear()
         else:
             operand.append(sentence[i])
-    
+
     return processed_sentence + _process_operand(operand).copy()
 
 
@@ -320,13 +348,13 @@ def CNF(sentence):
     sentence = eliminate_invalid_parenthesis(sentence)
     sentence = move_not_inwards(sentence)
     sentence = eliminate_invalid_parenthesis(sentence)
-    
+
     prev = []
     while prev != sentence:
         prev = sentence
         sentence = distribute_or_over_and(sentence)
         sentence = eliminate_invalid_parenthesis(sentence)
-    
+
     return split_around_and(sentence)
 
 
@@ -340,8 +368,8 @@ def clause_map(sentence):
     : Format : (A|B|...|Z) where literal like A, B, ..., Z can be negated.
     """
     m = {}
-    j = 1 if sentence[0] == '(' else 0
-    L = len(sentence) - 1 if sentence[0] == '(' else len(sentence)
+    j = 1 if sentence[0] == "(" else 0
+    L = len(sentence) - 1 if sentence[0] == "(" else len(sentence)
     while j < L:
         literal, j = forward_slice(sentence, j)
         if literal[0] == "!":
@@ -354,7 +382,9 @@ def clause_map(sentence):
 
 
 def format_dict(dictionary):
-    return ", ".join([("!" if dictionary[key] else "") + str(key) for key in dictionary])
+    return ", ".join(
+        [("!" if dictionary[key] else "") + str(key) for key in dictionary]
+    )
 
 
 def resolve(sentence, mode):
@@ -370,48 +400,65 @@ def resolve(sentence, mode):
     clauses = []
     clause_maps = []
     for literal in sentence:
-        if literal == '&':
-            clauses.append(''.join(clause))
+        if literal == "&":
+            clauses.append("".join(clause))
             clause_maps.append(clause_map(clause))
             clause.clear()
         else:
             clause.append(literal)
-    clauses.append(''.join(clause))
+    clauses.append("".join(clause))
     clause_maps.append(clause_map(clause))
     new_clause_maps = []
-    
+
     if mode:
         print("Clauses <- The set of clauses in the CNF representation of (KB & !Q)")
         print("Clauses: {}".format(clauses))
         print("New Clauses <- {}")
         print("For each pair of clauses C_i, C_j in Clauses do:")
-    
-    while True:        
+
+    while True:
         for i in range(0, len(clause_maps)):
             for j in range((i + 1), len(clause_maps)):
                 resolvent = {}
                 for var in clause_maps[i]:
-                    if var not in clause_maps[j] or clause_maps[j][var] == clause_maps[i][var]:
+                    if (
+                        var not in clause_maps[j]
+                        or clause_maps[j][var] == clause_maps[i][var]
+                    ):
                         resolvent[var] = clause_maps[i][var]
-                
+
                 for var in clause_maps[j]:
                     if var not in clause_maps[i]:
                         resolvent[var] = clause_maps[j][var]
 
-                print("\t({}) <- RESOLVE(({}), ({}))".format(format_dict(resolvent), format_dict(clause_maps[i]), format_dict(clause_maps[j]))) if mode else None
+                print(
+                    "\t({}) <- RESOLVE(({}), ({}))".format(
+                        format_dict(resolvent),
+                        format_dict(clause_maps[i]),
+                        format_dict(clause_maps[j]),
+                    )
+                ) if mode else None
 
                 if not bool(resolvent):
-                    print("\tIf Resolvents contains the empty clause: Return True.") if mode else None
+                    print(
+                        "\tIf Resolvents contains the empty clause: Return True."
+                    ) if mode else None
                     return True
 
-                new_clause_maps.append(resolvent) if resolvent not in new_clause_maps else None
+                new_clause_maps.append(
+                    resolvent
+                ) if resolvent not in new_clause_maps else None
                 print("\tNew Clauses <- New Clauses ∪ Resolvents") if mode else None
 
         if all(new_clause_map in clause_maps for new_clause_map in new_clause_maps):
             print("If New Clauses ⊆ Clauses : Return False") if mode else None
             return False
 
-        clause_maps += [new_clause_map for new_clause_map in new_clause_maps if new_clause_map not in clause_maps]
+        clause_maps += [
+            new_clause_map
+            for new_clause_map in new_clause_maps
+            if new_clause_map not in clause_maps
+        ]
         print("Clauses <- Clauses ∪ New Clauses") if mode else None
 
 
@@ -433,10 +480,10 @@ def _get_input():
     """
     # n : Number of Propositional Sentence or Formula in Knowledge Base
     # m : Mode for Output
-    # 
+    #
     # If m == 0 :
     #   Print only the result (int 0 or 1)
-    # If m == 1 : 
+    # If m == 1 :
     #   1. Print the resolution steps used
     #   2. Print the result (int 0 or 1) in the last line
     n, m = input().split()
@@ -448,10 +495,10 @@ def _get_input():
         # sentence : Propositional Sentence or Formula in Knowledge Base
         sentences.append(input().splitlines()[0])
         n -= 1
-    
+
     # query : Propositional Sentence or Formula to be proved
     query = input().splitlines()[0]
-    
+
     return m, sentences, query
 
 
@@ -471,9 +518,9 @@ def main():
     query = vet_sentence(segment_sentence(query))
 
     # rub : Input for resolution
-    rub = ['!'] + query.copy()
+    rub = ["!"] + query.copy()
     if len(knowledge_base) > 0:
-        rub = knowledge_base.copy() + ['&', '('] + rub.copy() + [')']
+        rub = knowledge_base.copy() + ["&", "("] + rub.copy() + [")"]
 
     if len(rub):
         rub = vet_sentence(rub)
