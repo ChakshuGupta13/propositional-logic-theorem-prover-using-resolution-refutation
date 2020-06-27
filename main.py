@@ -525,3 +525,7 @@ def main():
     if len(rub):
         rub = vet_sentence(rub)
         return int(resolve(rub, m))
+
+
+if __name__ == "__main__":
+    print(main())
